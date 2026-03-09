@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Frigorífico N&S</title>
+    <style>
+        :root {
+            --dorado: #f1c40f; /* El color de tus encabezados */
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: url'https://www.canva.com/design/DAHDcys3MjQ/t27MaHNmwp8F6ZknIgLWQA/watch?utm_content=DAHDcys3MjQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h354490480f' no-repeat center top;
+            background-size: 100% auto;
+            color: white;
+            font-family: 'Arial Narrow', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Contenedor principal que divide en 3 columnas */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* Tres columnas iguales */
+            gap: 20px;
+            padding: 400px 5% 20px 5%; /* Ajusta el 400px para bajar el texto bajo el logo */
+        }
+
+        .columna {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted rgba(255,255,255,0.3);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .precio {
+            color: var(--dorado);
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Fila inferior para Cortes Especiales */
+        .especiales-full {
+            grid-column: 1 / span 4; /* Ocupa las 3 columnas */
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-menu" id="menu-data">
+        <div class="columna" id="cat-parrilleros"></div>
+        <div class="columna" id="cat-americanos"></div>
+        <div class="columna" id="cat-preparacion"></div>
+        
+        <div class="especiales-full" id="cat-especiales"></div>
+    </div>
+
+<script>
+    const csvUrl = 'TU_URL_DE_GOOGLE_SHEETS_CSV';
+
+    async function cargarDatos() {
+        const res = await fetch(csvUrl);
+        const csvText = await res.text();
+        const filas = csvText.split('\n').slice(1);
+
+        filas.forEach(fila => {
+            const [nombre, precio, categoria] = fila.split(',');
+            if (!nombre) return;
+
+            const htmlItem = `
+                <div class="item">
+                    <span>${nombre}</span>
+                    <span class="precio">${precio}</span>
+                </div>`;
+
+            // Ubicar en el contenedor correcto según la categoría del Excel
+            if(categoria.trim() === 'Parrilleros') document.getElementById('cat-parrilleros').innerHTML += htmlItem;
+            if(categoria.trim() === 'Americanos') document.getElementById('cat-americanos').innerHTML += htmlItem;
+            if(categoria.trim() === 'Preparacion') document.getElementById('cat-preparacion').innerHTML += htmlItem;
+            if(categoria.trim() === 'Especiales') document.getElementById('cat-especiales').innerHTML += htmlItem;
+        });
+    }
+
+    cargarDatos();
+</script>
+</body>
+</html>
