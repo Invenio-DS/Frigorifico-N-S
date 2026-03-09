@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Frigorífico N&S</title>
+    <title>MenÃº FrigorÃ­fico N&S</title>
     <style>
         :root {
             --dorado: #f1c40f; /* El color de tus encabezados */
@@ -11,7 +11,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: url'https://www.canva.com/design/DAHDcys3MjQ/t27MaHNmwp8F6ZknIgLWQA/watch?utm_content=DAHDcys3MjQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h354490480f' no-repeat center top;
+            background: url('Menu TV Carnes.jpg') no-repeat center top;
             background-size: 100% auto;
             color: white;
             font-family: 'Arial Narrow', sans-serif;
@@ -83,7 +83,7 @@
                     <span class="precio">${precio}</span>
                 </div>`;
 
-            // Ubicar en el contenedor correcto según la categoría del Excel
+            // Ubicar en el contenedor correcto segÃºn la categorÃ­a del Excel
             if(categoria.trim() === 'Parrilleros') document.getElementById('cat-parrilleros').innerHTML += htmlItem;
             if(categoria.trim() === 'Americanos') document.getElementById('cat-americanos').innerHTML += htmlItem;
             if(categoria.trim() === 'Preparacion') document.getElementById('cat-preparacion').innerHTML += htmlItem;
@@ -94,4 +94,5 @@
     cargarDatos();
 </script>
 </body>
+
 </html>
