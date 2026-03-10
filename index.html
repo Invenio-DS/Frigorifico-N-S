@@ -137,15 +137,15 @@
                                 <div class="item">
                                     <span class="nombre">${producto}</span>
                                     <span class="precio-bs">Bs. ${precioBs}</span>
-                                    <span class="precio-ref">Ref:${precioRef}</span>
+                                    <span class="precio-ref">Ref: ${precioRef}</span>
                                 </div>`;
                         }
                     }
 
                     // Tasa desde la columna E (índice 4) de la primera fila
-                    if (index === 0 && cols[4]) {
-                        const tasaValor = cols[4].replace(/"/g, '').trim();
-                        document.getElementById('tasa-info').innerText = "TASA BCV: " + tasaValor;
+                    //if (index === 0 && cols[4]) {
+                    //    const tasaValor = cols[4].replace(/"/g, '').trim();
+                    //    document.getElementById('tasa-info').innerText = "TASA BCV: " + tasaValor;
                     }
                 });
             } catch (error) {
@@ -161,6 +161,7 @@
     </script>
 </body>
 </html>
+
 
 
 
