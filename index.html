@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Frigorífico N&S - 4 Cuadrantes</title>
+    <title>Menú Frigorífico N&S</title>
     <style>
         :root {
             --dorado: #f1c40f; 
@@ -16,6 +16,7 @@
             width: 1280px;
             height: 768px;
             overflow: hidden;
+            /* Usamos la imagen de fondo limpia */
             background: url('Carnes.jpg') no-repeat center center;
             background-size: 100% 100%;
             background-color: #2c1a10;
@@ -24,70 +25,66 @@
             text-transform: uppercase;
         }
 
-        /* Contenedor en Cruz (2x2) */
-        .contenedor-cruz {
+        /* Contenedor principal en 4 cuadrantes */
+        .grid-cruz {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Dos columnas */
-            grid-template-rows: 1fr 1fr;    /* Dos filas */
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
             width: 100%;
             height: 100%;
-            /* Ajusta este padding si el logo central de tu imagen de Canva tapa el texto */
-            padding: 20px;
             box-sizing: border-box;
+            /* Los rellenos ajustan el texto dentro de los espacios de la imagen */
+            padding: 380px 40px 60px 40px; 
+            gap: 20px 60px;
         }
 
         .cuadrante {
             display: flex;
             flex-direction: column;
-            padding: 40px; /* Espacio interno para que el texto no toque los bordes */
         }
 
-        /* Estilo de los productos */
+        /* Estructura del Producto | Bs | Ref */
         .item {
             display: grid;
-            grid-template-columns: 1.5fr 1fr 0.8fr;
+            grid-template-columns: 1.5fr 1fr 0.6fr;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 2px;
         }
 
         .nombre { font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-size: 0.8rem; padding-right: 10px; opacity: 0.8; }
+        .precio-bs { text-align: right; font-size: 0.75rem; opacity: 0.9; padding-right: 5px; }
         .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; }
 
-        /* Títulos de categorías (opcional, si no están en tu imagen de Canva) */
-        .titulo-cat {
+        /* Widget de Tasa en E2 (Opcional, se puede quitar si no se usa) */
+        #tasa-fixed {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
             color: var(--dorado);
-            border-bottom: 2px solid var(--dorado);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="contenedor-cruz">
-        <div class="cuadrante" id="cat-cortes-parrilleros">
-            <div class="titulo-cat">Cortes Parrilleros</div>
-        </div>
+    <div id="tasa-fixed"></div>
+
+    <div class="grid-cruz">
+        <div class="cuadrante" id="cat-cortes-parrilleros"></div>
         
-        <div class="cuadrante" id="cat-cortes-americanos">
-            <div class="titulo-cat">Cortes Americanos</div>
-        </div>
+        <div class="cuadrante" id="cat-cortes-de-peparacion"></div>
 
-        <div class="cuadrante" id="cat-cortes-de-preparacion">
-            <div class="titulo-cat">Cortes de Preparación</div>
-        </div>
+        <div class="cuadrante" id="cat-cortes-americanos"></div>
 
-        <div class="cuadrante" id="cat-cortes-especiales">
-            <div class="titulo-cat">Cortes Especiales</div>
-        </div>
+        <div class="cuadrante" id="cat-cortes-especiales"></div>
     </div>
 
     <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIxfSFe9_7YUSgq8rqTctM6GXYHP5xCzgBVGmQo9RyNF02H9N3HV7r8Ras9p7-2507Ug5Pj13JT-N2/pub?gid=0&single=true&output=csv';
+        const csvUrl = 'TU_URL_DE_GOOGLE_SHEETS_AQUI';
 
         async function cargarDatos() {
             try {
@@ -95,7 +92,7 @@
                 const csvText = await response.text();
                 const filas = csvText.split(/\r?\n/).slice(1);
 
-                filas.forEach(fila => {
+                filas.forEach((fila, index) => {
                     const cols = fila.includes(';') ? fila.split(';') : fila.split(',');
                     
                     if (cols.length >= 4) {
@@ -104,20 +101,25 @@
                         const precioRef = cols[2].trim();
                         const categoriaRaw = cols[3].trim().toLowerCase();
 
-                        // Convierte "Cortes Parrilleros" en "cat-cortes-parrilleros"
+                        // Formatear ID para que coincida (ej: "cortes parrilleros" -> "cat-cortes-parrilleros")
                         const idFinal = "cat-" + categoriaRaw.replace(/\s+/g, '-');
 
                         const htmlItem = `
                             <div class="item">
                                 <span class="nombre">${producto}</span>
                                 <span class="precio-bs">Bs. ${precioBs}</span>
-                                <span class="precio-ref">REF: ${precioRef}</span>
+                                <span class="precio-ref">${precioRef}</span>
                             </div>`;
 
                         const contenedor = document.getElementById(idFinal);
                         if (contenedor) {
                             contenedor.innerHTML += htmlItem;
                         }
+                    }
+
+                    // Cargar Tasa de la celda E2 (Fila 1 en código, columna 4)
+                    if (index === 0 && cols[4]) {
+                        document.getElementById('tasa-fixed').innerText = "TASA: " + cols[4].trim();
                     }
                 });
             } catch (error) {
