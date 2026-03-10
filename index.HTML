@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="refresh" content="300">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital - Frigorífico N&S</title>
+    <style>
+        /* Configuración de colores basada en tus proyectos previos */
+        :root {
+            --dorado: #f1c40f; 
+            --gris-claro: #d1d1d1;
+            --blanco: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* Dimensiones exactas para tu TV de 32" */
+            width: 1280px;
+            height: 768px;
+            overflow: hidden; 
+            /* Imagen de fondo desde GitHub */
+            background: url('Menu TV Carnes.jpg') no-repeat center top;
+            background-size: 100% 100%;
+            background-color: #2c1a10;
+            color: var(--blanco);
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Contenedor principal de 3 columnas */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            /* Ajusta este padding-top (310px) para que el texto baje 
+               exactamente a los recuadros amarillos de tu diseño de Canva */
+            padding: 310px 50px 0 50px;
+        }
+
+        .columna {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Estructura de cada producto: Nombre | Bs. | Ref. */
+        .item {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 0.8fr;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 2px;
+        }
+
+        .nombre {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .precio-bs {
+            color: var(--gris-claro);
+            text-align: right;
+            font-size: 0.75rem;
+            padding-right: 5px;
+        }
+
+        .precio-ref {
+            color: var(--dorado);
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* Fila inferior para la categoría Especiales */
+        .especiales-full {
+            grid-column: 1 / span 3;
+            margin-top: 45px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-menu">
+        <div class="columna" id="cat-cortes parrilleros"></div>
+        <div class="columna" id="cat-cortes americanos"></div>
+        <div class="columna" id="cat-cortes de preparacion"></div>
+    </div>
+
+    <div class="especiales-full" id="cat-cortes especiales"></div>
+
+    <script>
+        // REEMPLAZA ESTO CON TU ENLACE DE "PUBLICAR EN LA WEB" (FORMATO CSV)
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIxfSFe9_7YUSgq8rqTctM6GXYHP5xCzgBVGmQo9RyNF02H9N3HV7r8Ras9p7-2507Ug5Pj13JT-N2/pub?gid=0&single=true&output=csv';
+
+        async function cargarDatos() {
+            try {
+                const response = await fetch(csvUrl);
+                if (!response.ok) throw new Error("No se pudo obtener el archivo de Google Sheets");
+                
+                const csvText = await response.text();
+                // Dividir por líneas y omitir la primera (encabezado)
+                const filas = csvText.split(/\r?\n/).slice(1);
+
+                filas.forEach(fila => {
+                    // Detectar automáticamente si el separador es coma o punto y coma
+                    const cols = fila.includes(';') ? fila.split(';') : fila.split(',');
+                    
+                    if (cols.length >= 4) {
+                        const producto = cols[0].trim();
+                        const precioBs = cols[1].trim();
+                        const precioRef = cols[2].trim();
+                        const categoria = cols[3].trim().toUpperCase();
+
+                        const htmlItem = `
+                            <div class="item">
+                                <span class="nombre">${producto}</span>
+                                <span class="precio-bs">Bs. ${precioBs}</span>
+                                <span class="precio-ref">REF: ${precioRef}</span>
+                            </div>`;
+
+                        // Insertar en el contenedor correspondiente
+                        if (categoria === 'CORTES PARRILLEROS') document.getElementById('cat-parrilleros').innerHTML += htmlItem;
+                        else if (categoria === 'CORTES AMERICANOS') document.getElementById('cat-americanos').innerHTML += htmlItem;
+                        else if (categoria === 'CORTE DE PREPARACION') document.getElementById('cat-preparacion').innerHTML += htmlItem;
+                        else if (categoria === 'CORTES ESPECIALES') document.getElementById('cat-especiales').innerHTML += htmlItem;
+                    }
+                });
+            } catch (error) {
+                console.error("Error cargando los datos:", error);
+                document.body.insertAdjacentHTML('beforeend', `<div style="color:red; position:fixed; bottom:10px; left:10px;">Error: ${error.message}</div>`);
+            }
+        }
+
+        cargarDatos();
+    </script>
+</body>
+</html>
