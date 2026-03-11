@@ -2,100 +2,69 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Digital - Frigorífico N&S</title>
     <style>
-        :root {
-            --dorado: #f1c40f; 
-            --blanco: #ffffff;
-        }
+        :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
         body {
-            margin: 0;
-            padding: 0;
-            width: 1180px; 
-            height: 630px; 
+            margin: 0; padding: 0;
+            width: 1180px; height: 630px;
             overflow: hidden;
+            /* Asegúrate de que el nombre del archivo coincida exactamente */
             background: url('Carnes.jpg') no-repeat center center;
             background-size: 100% 100%;
             background-color: #1a0f0a;
             color: var(--blanco);
-            font-family: 'Poppins', sans-serif;
-            /* Quitamos text-transform: uppercase de aquí */
+            font-family: 'Arial', sans-serif;
         }
 
-        .grid-cruz {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+        .menu-container {
+            position: relative;
             width: 100%;
             height: 100%;
-            box-sizing: border-box;
-            padding: 260px 30px 30px 30px; 
-            gap: 30px 100px;
         }
 
+        /* Cada cuadrante es independiente para que cuadre con tu imagen */
         .cuadrante {
+            position: absolute;
             display: flex;
             flex-direction: column;
+            width: 530px; /* Ancho de la columna amarilla */
+            height: 220px; /* Altura máxima para no pisar el fondo */
             overflow: hidden;
         }
 
+        /* AJUSTE DE COORDENADAS (Modifica estos valores para centrar sobre los cuadros) */
+        #cat-cortes-parrilleros { top: 75px; left: 45px; }
+        #cat-cortes-de-preparacion { top: 75px; left: 615px; }
+        #cat-cortes-americanos { top: 370px; left: 45px; }
+        #cat-cortes-especiales { top: 370px; left: 615px; }
+
         .item {
             display: grid;
-            grid-template-columns: 1.8fr 1fr 0.7fr;
+            grid-template-columns: 2.2fr 1fr 0.8fr; /* Ajuste de espacio nombre/precio */
             align-items: center;
             margin-bottom: 5px;
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            padding-bottom: 1px;
-            letter-spacing: 1px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 2px;
         }
 
         .nombre { 
-            font-weight: bold;
+            font-weight: bold; 
+            text-transform: uppercase; 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
-            /* SOLO EL NOMBRE EN MAYÚSCULAS */
-            text-transform: uppercase; 
         }
 
-        .precio-bs { 
-            text-align: right; 
-            font-weight: bold;
-            opacity: 0.9; 
-            padding-right: 8px;
-            /* Forzamos que los precios y "Bs" se mantengan normal */
-            text-transform: none;
-        }
-
-        .precio-ref { 
-            color: var(--dorado);
-            font-weight: bold; 
-            text-align: right;
-            /* Forzamos que "Ref" se mantenga normal */
-            text-transform: none;
-        }
-
-        #tasa-info {
-            position: fixed;
-            top: 10px;
-            right: 15px;
-            font-size: 16px;
-            color: var(--dorado);
-            font-weight: bold;
-            background: rgba(0,0,0,0.6);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 15px; }
+        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="tasa-info"></div>
-
-    <div class="grid-cruz">
+    <div class="menu-container">
         <div class="cuadrante" id="cat-cortes-parrilleros"></div>
         <div class="cuadrante" id="cat-cortes-de-preparacion"></div>
         <div class="cuadrante" id="cat-cortes-americanos"></div>
@@ -111,15 +80,27 @@
                 const csvText = await response.text();
                 const filas = csvText.split(/\r?\n/).slice(1);
 
-                filas.forEach((fila, index) => {
+                // Limpiar cuadrantes
+                document.querySelectorAll('.cuadrante').forEach(c => c.innerHTML = '');
+
+                filas.forEach((fila) => {
+                    // Separar columnas respetando comillas
                     let cols = fila.split(/[,;](?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     
                     if (cols.length >= 4) {
                         const producto = cols[0].replace(/"/g, '').trim();
-                        const precioBs = cols[1].replace(/"/g, '').trim();
-                        const precioRef = cols[2].replace(/"/g, '').trim();
+                        const precioBsStr = cols[1].replace(/"/g, '').trim();
+                        const precioRefStr = cols[2].replace(/"/g, '').trim();
                         const categoriaRaw = cols[3].replace(/"/g, '').trim().toLowerCase();
 
+                        // --- FILTRO DE ITEMS VACÍOS O PRECIO 0 ---
+                        const precioLimpio = precioBsStr.replace(/[.,\s]/g, ''); // Quita puntos, comas y espacios
+                        
+                        if (!producto || precioLimpio === "000" || precioLimpio === "0" || precioBsStr === "") {
+                            return; // No procesar este producto
+                        }
+
+                        // Generar ID compatible (ej: "cortes parrilleros" -> "cat-cortes-parrilleros")
                         const idFinal = "cat-" + categoriaRaw.replace(/\s+/g, '-');
                         const contenedor = document.getElementById(idFinal);
 
@@ -127,25 +108,23 @@
                             contenedor.innerHTML += `
                                 <div class="item">
                                     <span class="nombre">${producto}</span>
-                                    <span class="precio-bs">Bs. ${precioBs}</span>
-                                    <span class="precio-ref">Ref: ${precioRef}</span>
+                                    <span class="precio-bs">Bs. ${precioBsStr}</span>
+                                    <span class="precio-ref">Ref: ${precioRefStr}</span>
                                 </div>`;
                         }
                     }
-
-                    if (index === 0 && cols[4]) {
-                        const tasaValor = cols[4].replace(/"/g, '').trim();
-                        document.getElementById('tasa-info').innerText = "Tasa BCV: " + tasaValor;
-                    }
                 });
             } catch (error) {
-                console.error("Error al cargar datos:", error);
+                console.error("Error cargando el menú:", error);
             }
         }
 
+        // Carga inicial y actualización cada 5 minutos
         cargarMenu();
-        setTimeout(() => { location.reload(); }, 300000);
+        setInterval(cargarMenu, 300000);
     </script>
 </body>
 </html>
+</html>
+
 
