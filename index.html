@@ -52,15 +52,15 @@
             grid-template-columns: 2.2fr 1fr 0.8fr; 
             align-items: center;
             margin-bottom: 5px;
-            font-size: 14px;
+            font-size: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 2px;
             color: var(--blanco);
         }
 
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 15px; }
-        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 15px; }
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 12px; }
+        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 12px; }
 
         /* Clase para el efecto de desvanecimiento */
         .fade-out { opacity: 0; }
@@ -80,8 +80,8 @@
     <script>
         function ajustarEscala() {
             const canvas = document.getElementById('menu-canvas');
-            const escalaX = window.innerWidth / 1180;
-            const escalaY = window.innerHeight / 630;
+            const escalaX = window.innerWidth / 1920;
+            const escalaY = window.innerHeight / 1080;
             canvas.style.transform = `translate(-50%, -50%) scale(${escalaX}, ${escalaY})`;
         }
 
@@ -148,4 +148,5 @@
     </script>
 </body>
 </html>
+
 
