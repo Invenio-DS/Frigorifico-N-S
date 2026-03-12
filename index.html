@@ -20,8 +20,8 @@
         /* Este es nuestro lienzo de diseño original */
         #menu-canvas {
             position: relative;
-            width: 1400px;
-            height: 480px;
+            width: 1180px;
+            height: 630px;
             background: url('Carnes.jpg') no-repeat center center;
             background-size: 100% 100%;
             /* Escalaremos desde el centro para que llene la pantalla */
@@ -80,8 +80,8 @@
         // --- 1. LÓGICA DE ESCALADO AUTOMÁTICO (SOLUCIÓN 1080p) ---
         function ajustarPantalla() {
             const canvas = document.getElementById('menu-canvas');
-            const anchoDeseado = 1180;
-            const altoDeseado = 630;
+            const anchoDeseado = 1280;
+            const altoDeseado = 720;
             
             // Calculamos cuánto espacio hay disponible en la TV
             const escalaAncho = window.innerWidth / anchoDeseado;
@@ -143,6 +143,7 @@
     </script>
 </body>
 </html>
+
 
 
 
