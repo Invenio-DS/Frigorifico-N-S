@@ -2,22 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú Digital N&S - En Vivo Pro</title>
+    <title>Menú Digital N&S - Fix Imagen</title>
     <style>
         :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: #000;
+            /* Fondo de seguridad por si falla la imagen */
+            background-color: #222; 
             overflow: hidden;
             font-family: 'Arial', sans-serif;
         }
 
-            #bg-container {
+        #bg-container {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
+            /* REEMPLAZA ESTA URL CON TU RUTA DE GITHUB RAW */
             background: url('https://raw.githubusercontent.com/Invenio-DS/Frigorifico-N-S/main/Carnes_2.jpg') no-repeat center center;
             background-size: 100% 100%; 
             z-index: -1;
@@ -28,7 +30,6 @@
             top: 50%; left: 50%;
             width: 1180px; height: 630px;
             transform-origin: center center;
-            /* Transición para el efecto de desvanecimiento */
             transition: opacity 0.8s ease-in-out;
             opacity: 1;
         }
@@ -52,18 +53,15 @@
             grid-template-columns: 2.2fr 1fr 0.8fr; 
             align-items: center;
             margin-bottom: 5px;
-            font-size: 12px;
+            font-size: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 2px;
             color: var(--blanco);
         }
 
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 12px; }
-        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 12px; }
-
-        /* Clase para el efecto de desvanecimiento */
-        .fade-out { opacity: 0; }
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 15px; }
+        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -80,8 +78,8 @@
     <script>
         function ajustarEscala() {
             const canvas = document.getElementById('menu-canvas');
-            const escalaX = window.innerWidth / 1920;
-            const escalaY = window.innerHeight / 1080;
+            const escalaX = window.innerWidth / 1180;
+            const escalaY = window.innerHeight / 630;
             canvas.style.transform = `translate(-50%, -50%) scale(${escalaX}, ${escalaY})`;
         }
 
@@ -92,7 +90,6 @@
 
         async function cargarMenu() {
             const canvas = document.getElementById('menu-canvas');
-            
             try {
                 const response = await fetch(`${csvUrl}&t=${new Date().getTime()}`);
                 const csvText = await response.text();
@@ -117,28 +114,22 @@
                         if (!producto || precioLimpio === "000" || precioLimpio === "0" || precioBsStr === "") return;
 
                         if (divs[cat] !== undefined) {
-                            divs[cat] += `
-                                <div class="item">
-                                    <span class="nombre">${producto}</span>
-                                    <span class="precio-bs">Bs. ${precioBsStr}</span>
-                                    <span class="precio-ref">Ref: ${precioRefStr}</span>
-                                </div>`;
+                            divs[cat] += `<div class="item">
+                                <span class="nombre">${producto}</span>
+                                <span class="precio-bs">Bs. ${precioBsStr}</span>
+                                <span class="precio-ref">Ref: ${precioRefStr}</span>
+                            </div>`;
                         }
                     }
                 });
 
-                // --- EFECTO VISUAL ---
-                // 1. Desvanecer hacia afuera
                 canvas.style.opacity = '0';
-                
                 setTimeout(() => {
-                    // 2. Cambiar los datos mientras está oculto
                     for (let key in divs) {
                         document.getElementById(key).innerHTML = divs[key];
                     }
-                    // 3. Desvanecer hacia adentro con los nuevos datos
                     canvas.style.opacity = '1';
-                }, 800); // Espera a que termine la animación de salida
+                }, 800);
 
             } catch (e) { console.warn("Sincronizando..."); }
         }
@@ -148,7 +139,3 @@
     </script>
 </body>
 </html>
-
-
-
-
