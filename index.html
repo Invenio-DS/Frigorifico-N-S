@@ -2,14 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú Adaptativo - Frigorífico N&S</title>
+    <title>Menú Digital Full HD - Frigorífico N&S</title>
     <style>
         :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
-        /* El body ahora es un contenedor negro que centra el menú */
         body {
             margin: 0; padding: 0;
-            background-color: #000;
+            background-color: #000; /* Fondo negro por si acaso */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,50 +17,59 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Este es el lienzo original. Se escalará solo. */
-        #canvas-menu {
+        /* Este es nuestro lienzo de diseño original */
+        #menu-canvas {
             position: relative;
             width: 1180px;
             height: 630px;
-            background: url('Carnes 1.png') no-repeat center center;
+            background: url('Carnes.jpg') no-repeat center center;
             background-size: 100% 100%;
-            transform-origin: center; /* Escala desde el centro */
+            /* Escalaremos desde el centro para que llene la pantalla */
+            transform-origin: center center; 
+            transition: transform 0.1s ease-out; /* Suaviza el cambio si redimensionas */
         }
 
         .cuadrante {
             position: absolute;
             display: flex;
             flex-direction: column;
-            width: 510px;
-            height: 225px;
+            width: 530px; /* Ancho de la columna amarilla */
+            height: 220px; 
             overflow: hidden;
         }
 
-        /* Coordenadas fijas para el diseño de 1180x630 */
-        #cat-cortes-parrilleros { top: 85px; left: 55px; }
-        #cat-cortes-de-preparacion { top: 85px; left: 615px; }
-        #cat-cortes-americanos { top: 375px; left: 55px; }
-        #cat-cortes-especiales { top: 375px; left: 615px; }
+        /* COORDENADAS ORIGINALES PARA 1180x630 (NO TOCAR) */
+        #cat-cortes-parrilleros { top: 75px; left: 45px; }
+        #cat-cortes-de-preparacion { top: 75px; left: 615px; }
+        #cat-cortes-americanos { top: 370px; left: 45px; }
+        #cat-cortes-especiales { top: 370px; left: 615px; }
 
         .item {
             display: grid;
-            grid-template-columns: 2.2fr 1fr 0.8fr;
+            grid-template-columns: 2.2fr 1fr 0.8fr; 
             align-items: center;
-            margin-bottom: 6px;
-            font-size: 13.5px;
+            margin-bottom: 5px;
+            font-size: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 2px;
             color: var(--blanco);
         }
 
-        .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-weight: bold; padding-right: 10px; font-size: 15px; }
+        .nombre { 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 8px; font-size: 15px; }
         .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="canvas-menu">
+    <div id="menu-canvas">
         <div class="cuadrante" id="cat-cortes-parrilleros"></div>
         <div class="cuadrante" id="cat-cortes-de-preparacion"></div>
         <div class="cuadrante" id="cat-cortes-americanos"></div>
@@ -69,26 +77,29 @@
     </div>
 
     <script>
-        // --- 1. LÓGICA DE ESCALADO AUTOMÁTICO ---
-        function ajustarEscala() {
-            const canvas = document.getElementById('canvas-menu');
+        // --- 1. LÓGICA DE ESCALADO AUTOMÁTICO (SOLUCIÓN 1080p) ---
+        function ajustarPantalla() {
+            const canvas = document.getElementById('menu-canvas');
             const anchoDeseado = 1180;
             const altoDeseado = 630;
             
-            // Calculamos cuánto espacio hay disponible en la ventana actual
+            // Calculamos cuánto espacio hay disponible en la TV
             const escalaAncho = window.innerWidth / anchoDeseado;
             const escalaAlto = window.innerHeight / altoDeseado;
             
-            // Usamos la escala más pequeña para que el menú quepa siempre
+            // Usamos la escala más pequeña para que el menú siempre quepa
+            // (Si la TV es 1920x1080, esta escala será ~1.62)
             const escalaFinal = Math.min(escalaAncho, escalaAlto);
             
+            // Aplicamos la transformación mágica
             canvas.style.transform = `scale(${escalaFinal})`;
         }
 
-        window.addEventListener('resize', ajustarEscala);
-        ajustarEscala(); // Ejecutar al cargar
+        // Ejecutar al cargar y al cambiar el tamaño de la ventana
+        window.addEventListener('resize', ajustarPantalla);
+        ajustarPantalla(); 
 
-        // --- 2. CARGA DE DATOS (Misma lógica anterior) ---
+        // --- 2. CARGA DE DATOS (Misma lógica anterior con filtro 0,00) ---
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIxfSFe9_7YUSgq8rqTctM6GXYHP5xCzgBVGmQo9RyNF02H9N3HV7r8Ras9p7-2507Ug5Pj13JT-N2/pub?gid=0&single=true&output=csv';
 
         async function cargarMenu() {
@@ -100,13 +111,14 @@
                 document.querySelectorAll('.cuadrante').forEach(c => c.innerHTML = '');
 
                 filas.forEach((fila) => {
-                    let cols = fila.split(/[,;](?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    let cols = fila.split(/[,;](?=(?:(?:[^"]*"){2})*[^3"]*$)/);
                     if (cols.length >= 4) {
                         const producto = cols[0].replace(/"/g, '').trim();
                         const precioBsStr = cols[1].replace(/"/g, '').trim();
                         const precioRefStr = cols[2].replace(/"/g, '').trim();
                         const categoriaRaw = cols[3].replace(/"/g, '').trim().toLowerCase();
 
+                        // Filtro de items vacíos o precio 0
                         const precioLimpio = precioBsStr.replace(/[.,\s]/g, '');
                         if (!producto || precioLimpio === "000" || precioLimpio === "0" || precioBsStr === "") return; 
 
@@ -131,5 +143,6 @@
     </script>
 </body>
 </html>
+
 
 
