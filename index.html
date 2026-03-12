@@ -20,9 +20,9 @@
         /* Este es nuestro lienzo de diseño original */
         #menu-canvas {
             position: relative;
-            width: 1920px;
-            height: 860px;
-            background: url('Carnes 1.png') no-repeat center center;
+            width: 1180px;
+            height: 630px;
+            background: url('Carnes.jpg') no-repeat center center;
             background-size: 100% 100%;
             /* Escalaremos desde el centro para que llene la pantalla */
             transform-origin: center center; 
@@ -41,14 +41,14 @@
         /* COORDENADAS ORIGINALES PARA 1180x630 (NO TOCAR) */
         #cat-cortes-parrilleros { top: 75px; left: 45px; }
         #cat-cortes-de-preparacion { top: 75px; left: 615px; }
-        #cat-cortes-americanos { top: 375px; left: 45px; }
-        #cat-cortes-especiales { top: 375px; left: 615px; }
+        #cat-cortes-americanos { top: 370px; left: 45px; }
+        #cat-cortes-especiales { top: 370px; left: 615px; }
 
         .item {
             display: grid;
             grid-template-columns: 2.2fr 1fr 0.8fr; 
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-size: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 2px;
@@ -80,8 +80,8 @@
         // --- 1. LÓGICA DE ESCALADO AUTOMÁTICO (SOLUCIÓN 1080p) ---
         function ajustarPantalla() {
             const canvas = document.getElementById('menu-canvas');
-            const anchoDeseado = 1280;
-            const altoDeseado = 720;
+            const anchoDeseado = 1180;
+            const altoDeseado = 630;
             
             // Calculamos cuánto espacio hay disponible en la TV
             const escalaAncho = window.innerWidth / anchoDeseado;
@@ -143,11 +143,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
