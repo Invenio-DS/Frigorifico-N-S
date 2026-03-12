@@ -39,16 +39,16 @@
         }
 
         /* COORDENADAS ORIGINALES PARA 1180x630 (NO TOCAR) */
-        #cat-cortes-parrilleros { top: 125px; left: 45px; }
-        #cat-cortes-de-preparacion { top: 125px; left: 615px; }
-        #cat-cortes-americanos { top: 400px; left: 45px; }
-        #cat-cortes-especiales { top: 400px; left: 615px; }
+        #cat-cortes-parrilleros { top: 75px; left: 45px; }
+        #cat-cortes-de-preparacion { top: 75px; left: 615px; }
+        #cat-cortes-americanos { top: 375px; left: 45px; }
+        #cat-cortes-especiales { top: 375px; left: 615px; }
 
         .item {
             display: grid;
             grid-template-columns: 2.2fr 1fr 0.8fr; 
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             font-size: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 2px;
@@ -80,8 +80,8 @@
         // --- 1. LÓGICA DE ESCALADO AUTOMÁTICO (SOLUCIÓN 1080p) ---
         function ajustarPantalla() {
             const canvas = document.getElementById('menu-canvas');
-            const anchoDeseado = 1180;
-            const altoDeseado = 630;
+            const anchoDeseado = 1920;
+            const altoDeseado = 860;
             
             // Calculamos cuánto espacio hay disponible en la TV
             const escalaAncho = window.innerWidth / anchoDeseado;
@@ -143,6 +143,7 @@
     </script>
 </body>
 </html>
+
 
 
 
