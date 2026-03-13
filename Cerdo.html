@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú N&S - TV 2</title>
+    <title>MenÃº N&S - TV 2</title>
     <style>
         :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
@@ -41,8 +41,8 @@
 
         /* --- POSICIONES TV 2 --- */
         /* Cuadros Superiores (Cerdo) */
-        #cat-cerdo-izq { top: 250px; left: 55px; height: 245px; }
-        #cat-cerdo-der { top: 250px; left: 670px; height: 245px; }
+        #cat-cerdo-izq { top: 260px; left: 55px; height: 245px; }
+        #cat-cerdo-der { top: 260px; left: 670px; height: 245px; }
         
         /* Cuadros Inferiores (Cortes Especiales) */
         #cat-especiales-izq { top: 515px; left: 55px; height: 110px; }
@@ -52,18 +52,18 @@
             display: grid;
             grid-template-columns: 1.8fr 35px 80px 45px 65px;
             align-items: center;
-            height: 28px; /* Ajuste para 8 filas */
+            height: 25px; /* Ajuste para 8 filas */
             margin-bottom: 2px;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--blanco);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .label-bs { padding-left: 5px; text-align: left; font-size: 11px; }
-        .label-ref { padding-left: 15px; text-align: left; font-size: 11px; color: var(--dorado); }
-        .precio-bs { text-align: right; font-weight: bold; font-size: 14px; }
-        .precio-ref { text-align: right; font-weight: bold; font-size: 14px; color: var(--dorado); }
+        .label-bs { font-weight: bold; padding-left: 5px; text-align: left; font-size: 14px; }
+        .label-ref { font-weight: bold; padding-left: 15px; text-align: left; font-size: 14px; color: var(--dorado); }
+        .precio-bs { text-align: right; font-weight: bold; font-size: 12px; }
+        .precio-ref { text-align: right; font-weight: bold; font-size: 12px; color: var(--dorado); }
     </style>
 </head>
 <body>
@@ -113,10 +113,10 @@
 
                         let targetId = "";
 
-                        // LÓGICA DE REPARTO
+                        // LÃ“GICA DE REPARTO
                         if (categoria === "cerdo") {
                             countCerdo++;
-                            targetId = (countCerdo <= 8) ? "cat-cerdo-izq" : "cat-cerdo-der";
+                            targetId = (countCerdo <= 10) ? "cat-cerdo-izq" : "cat-cerdo-der";
                         } 
                         else if (categoria === "cortes especiales") {
                             countEspeciales++;
