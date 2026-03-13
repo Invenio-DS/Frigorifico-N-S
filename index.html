@@ -2,69 +2,80 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú N&S - Ajuste de App</title>
+    <title>Menú N&S - Ajuste 1080p</title>
     <style>
         :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
         body, html {
             margin: 0; padding: 0;
-            width: 1280px; height: 720px; /* Tamaño total que la app expande */
+            width: 100vw; height: 100vh;
+            background-color: #1a0f0a;
             overflow: hidden;
-            background: transparent; /* Importante para que se vea el fondo de la app */
             font-family: Arial, sans-serif;
         }
 
-        /* Este contenedor limita el área de los precios para que no pisen el RSS ni el Tiempo */
-        .safe-area {
-            position: relative;
-            width: 1180px; /* Ancho total menos los 100px del tiempo */
-            height: 630px; /* Alto total menos los 90px del footer */
-            /* Descomenta la línea de abajo para ver el área mientras pruebas */
-            /* border: 1px solid red; */ 
+        /* CAPA DE FONDO: Se adapta a los 1080p manteniendo la proporción */
+        #bg-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('https://raw.githubusercontent.com/frigorifico-ns/frigorifico-ns.github.io/main/Carnes.jpg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 1;
         }
 
-        /* --- CATEGORÍAS INDEPENDIENTES --- */
-        /* Ajustadas según la foto actual para que caigan bajo los títulos amarillos */
-        
+        /* ÁREA DE TRABAJO: 1180x630 escalado proporcionalmente a 1080p */
+        .safe-area {
+            position: absolute;
+            top: 0; left: 0;
+            width: 92.1%; /* Equivale a 1180 de 1280 */
+            height: 87.5%; /* Equivale a 630 de 720 */
+            z-index: 2;
+        }
+
         .cuadrante {
             position: absolute;
             display: flex;
             flex-direction: column;
-            width: 530px; 
-            height: 250px;
+            width: 44%; /* Ancho de cada columna de precios */
+            height: 38%; /* Alto para las 6 filas */
             overflow: hidden;
         }
 
-        /* Coordenadas ajustadas para 1280x720 (basadas en tu imagen actual) */
-        #cat-cortes-parrilleros { top: 440px; left: 30px; }
-        #cat-cortes-de-preparacion { top: 440px; left: 610px; }
+        /* COORDENADAS EN % (Subidas para alinear con las barras amarillas) */
+        #cat-cortes-parrilleros { top: 11%; left: 3%; }
+        #cat-cortes-de-preparacion { top: 11%; left: 52%; }
         
-        /* Estas se verán más abajo, cerca del límite del RSS */
-        #cat-cortes-americanos { top: 700px; left: 30px; } 
-        #cat-cortes-especiales { top: 700px; left: 610px; }
+        #cat-cortes-americanos { top: 58%; left: 3%; }
+        #cat-cortes-especiales { top: 58%; left: 52%; }
 
         .item {
             display: grid;
             grid-template-columns: 2.2fr 1fr 0.8fr;
             align-items: center;
-            margin-bottom: 4px;
-            font-size: 15px;
+            height: 15.5%; /* Distribuye las 6 filas en el alto del cuadrante */
+            min-height: 30px;
+            margin-bottom: 1%;
+            font-size: 1.4vw; /* Fuente que escala con el ancho de la pantalla */
             color: var(--blanco);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-weight: bold; padding-right: 10px; font-size: 16px; }
-        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 16px; }
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 5%; font-size: 1.6vw; }
+        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 1.6vw; }
     </style>
 </head>
 <body>
 
-    <div class="safe-area">
-        <div class="cuadrante" id="cat-cortes-parrilleros"></div>
-        <div class="cuadrante" id="cat-cortes-de-preparacion"></div>
-        <div class="cuadrante" id="cat-cortes-americanos"></div>
-        <div class="cuadrante" id="cat-cortes-especiales"></div>
+    <div id="bg-container">
+        <div class="safe-area">
+            <div class="cuadrante" id="cat-cortes-parrilleros"></div>
+            <div class="cuadrante" id="cat-cortes-de-preparacion"></div>
+            <div class="cuadrante" id="cat-cortes-americanos"></div>
+            <div class="cuadrante" id="cat-cortes-especiales"></div>
+        </div>
     </div>
 
     <script>
@@ -100,7 +111,7 @@
                         }
                     }
                 });
-            } catch (e) { console.error("Error en sincronización"); }
+            } catch (e) { console.error("Error de sincronización"); }
         }
 
         cargarMenu();
