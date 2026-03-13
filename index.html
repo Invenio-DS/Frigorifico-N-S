@@ -55,7 +55,7 @@
             /* 1. Nombre | 2. Etiqueta Bs | 3. Monto Bs | 4. Etiqueta Ref | 5. Monto Ref */
             grid-template-columns: 2fr 40px 80px 40px 60px;
             align-items: center;
-            height: 28px; /* Reducido para que entren 7 filas (7x32 = 224px) */
+            height: 25px; /* Reducido para que entren 7 filas (7x32 = 224px) */
             margin-bottom: 2px;
             font-size: 12px; /* Ligera reducción para legibilidad */
             color: var(--blanco);
@@ -65,8 +65,8 @@
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         /* Alineación de etiquetas a la izquierda y montos a la derecha */
-        .label-bs { padding-left: 25px; text-align: left; font-size: 14px; color: var(--blanco); }
-        .label-ref { padding-left: 25px; text-align: left; font-size: 14px; color: var(--dorado); }
+        .label-bs { padding-left: 25px; text-align: left; font-weight: bold; font-size: 14px; color: var(--blanco); }
+        .label-ref { padding-left: 25px; text-align: left; font-weight: bold; font-size: 14px; color: var(--dorado); }
         .precio-bs { text-align: right; font-weight: bold; font-size: 12px; padding-right: 5px; }
         .precio-ref { text-align: right; font-weight: bold; font-size: 12px; color: var(--dorado); }
     </style>
