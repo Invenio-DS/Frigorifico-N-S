@@ -45,14 +45,14 @@
         #cat-cerdo-der { top: 260px; left: 670px; height: 245px; }
         
         /* Cuadros Inferiores (Cortes Especiales) */
-        #cat-especiales-izq { top: 575px; left: 55px; height: 110px; }
-        #cat-especiales-der { top: 575px; left: 670px; height: 110px; }
+        #cat-especiales-izq { top: 625px; left: 55px; height: 110px; }
+        #cat-especiales-der { top: 625px; left: 670px; height: 110px; }
 
         .item {
             display: grid;
             grid-template-columns: 1.8fr 35px 80px 45px 65px;
             align-items: center;
-            height: 25px; /* Ajuste para 8 filas */
+            height: 28px; /* Ajuste para 8 filas */
             margin-bottom: 2px;
             font-size: 15px;
             color: var(--blanco);
@@ -116,7 +116,7 @@
                         // LÓGICA DE REPARTO
                         if (categoria === "cerdo") {
                             countCerdo++;
-                            targetId = (countCerdo <= 10) ? "cat-cerdo-izq" : "cat-cerdo-der";
+                            targetId = (countCerdo <= 9) ? "cat-cerdo-izq" : "cat-cerdo-der";
                         } 
                         else if (categoria === "cortes especiales") {
                             countEspeciales++;
