@@ -2,35 +2,35 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú N&S - Ajuste 1080p</title>
+    <title>Menú N&S - Fix Imagen 1080p</title>
     <style>
         :root { --dorado: #f1c40f; --blanco: #ffffff; }
 
         body, html {
             margin: 0; padding: 0;
-            width: 100vw; height: 100vh;
-            background-color: #1a0f0a;
+            width: 100%; height: 100%;
+            background-color: #1a0f0a; /* Fondo marrón por si la imagen tarda */
             overflow: hidden;
             font-family: Arial, sans-serif;
         }
 
-        /* CAPA DE FONDO: Se adapta a los 1080p manteniendo la proporción */
+        /* CAPA DE FONDO: Forzamos la carga desde la URL de GitHub Raw */
         #bg-container {
             position: fixed;
             top: 0; left: 0;
-            width: 100%; height: 100%;
+            width: 100vw; height: 100vh;
             background-image: url('https://raw.githubusercontent.com/frigorifico-ns/frigorifico-ns.github.io/main/Carnes.jpg');
-            background-size: 100% 100%;
+            background-size: cover; /* Cambiado a cover para que no deje bordes blancos */
+            background-position: center;
             background-repeat: no-repeat;
             z-index: 1;
         }
 
-        /* ÁREA DE TRABAJO: 1180x630 escalado proporcionalmente a 1080p */
+        /* ÁREA DE TRABAJO (1180x630 reales) */
         .safe-area {
-            position: absolute;
-            top: 0; left: 0;
-            width: 92.1%; /* Equivale a 1180 de 1280 */
-            height: 87.5%; /* Equivale a 630 de 720 */
+            position: relative;
+            width: 1180px;
+            height: 630px;
             z-index: 2;
         }
 
@@ -38,33 +38,32 @@
             position: absolute;
             display: flex;
             flex-direction: column;
-            width: 44%; /* Ancho de cada columna de precios */
-            height: 38%; /* Alto para las 6 filas */
+            width: 530px; 
+            height: 240px; 
             overflow: hidden;
         }
 
-        /* COORDENADAS EN % (Subidas para alinear con las barras amarillas) */
-        #cat-cortes-parrilleros { top: 11%; left: 3%; }
-        #cat-cortes-de-preparacion { top: 11%; left: 52%; }
+        /* COORDENADAS REVISADAS: Subidas al máximo para alinear con las barras amarillas */
+        #cat-cortes-parrilleros { top: 70px; left: 40px; }
+        #cat-cortes-de-preparacion { top: 70px; left: 620px; }
         
-        #cat-cortes-americanos { top: 58%; left: 3%; }
-        #cat-cortes-especiales { top: 58%; left: 52%; }
+        #cat-cortes-americanos { top: 375px; left: 40px; }
+        #cat-cortes-especiales { top: 375px; left: 620px; }
 
         .item {
             display: grid;
             grid-template-columns: 2.2fr 1fr 0.8fr;
             align-items: center;
-            height: 15.5%; /* Distribuye las 6 filas en el alto del cuadrante */
-            min-height: 30px;
-            margin-bottom: 1%;
-            font-size: 1.4vw; /* Fuente que escala con el ancho de la pantalla */
+            height: 35px; /* Altura para que quepan 6 filas */
+            margin-bottom: 2px;
+            font-size: 15px;
             color: var(--blanco);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nombre { font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .precio-bs { text-align: right; font-weight: bold; padding-right: 5%; font-size: 1.6vw; }
-        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 1.6vw; }
+        .precio-bs { text-align: right; font-weight: bold; padding-right: 10px; font-size: 16px; }
+        .precio-ref { color: var(--dorado); font-weight: bold; text-align: right; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -79,6 +78,19 @@
     </div>
 
     <script>
+        // FUNCIÓN DE ESCALADO DINÁMICO
+        // Esto detecta si la app expandió a 1080p y ajusta el grid automáticamente
+        function ajustarEscala() {
+            const safeArea = document.querySelector('.safe-area');
+            const escalaX = window.innerWidth / 1280; // Proporción base
+            const escalaY = window.innerHeight / 720;
+            safeArea.style.transform = `scale(${escalaX}, ${escalaY})`;
+            safeArea.style.transformOrigin = 'top left';
+        }
+
+        window.addEventListener('resize', ajustarEscala);
+        ajustarEscala();
+
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIxfSFe9_7YUSgq8rqTctM6GXYHP5xCzgBVGmQo9RyNF02H9N3HV7r8Ras9p7-2507Ug5Pj13JT-N2/pub?gid=0&single=true&output=csv';
 
         async function cargarMenu() {
@@ -111,7 +123,7 @@
                         }
                     }
                 });
-            } catch (e) { console.error("Error de sincronización"); }
+            } catch (e) { console.error("Error en sincronización"); }
         }
 
         cargarMenu();
