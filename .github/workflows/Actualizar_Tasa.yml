@@ -1,0 +1,31 @@
+name: Agente Actualizador de Tasa BCV
+on:
+  schedule:
+    # Lunes a Jueves a las 22:00 UTC (6:00 PM Venezuela)
+    - cron: '0 22 * * 1-4'
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Obtener Datos y Generar JSON
+        run: |
+          # Obtener la tasa de la API
+          TASA=$(curl -s https://ve.dolarapi.com/v1/dolares/oficial | jq -r '.promedio')
+          # Obtener fecha y hora actual de Venezuela (UTC-4)
+          FECHA=$(date -d 'now - 4 hours' +'%d/%m/%Y %I:%M %p')
+          
+          # Crear el archivo JSON con ambos datos
+          echo "{\"tasa\": \"$TASA\", \"actualizado\": \"$FECHA\"}" > tasa.json
+
+      - name: Commit y Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Agente Invenio"
+          git add tasa.json
+          git commit -m "Tasa actualizada: $(date)" || exit 0
+          git push
