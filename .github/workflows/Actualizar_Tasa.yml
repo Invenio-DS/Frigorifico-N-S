@@ -1,31 +1,44 @@
-name: Agente Actualizador de Tasa BCV
+name: Agente Robusto Tasa BCV
 on:
   schedule:
-    # Lunes a Jueves a las 22:00 UTC (6:00 PM Venezuela)
-    - cron: '0 22 * * 1-4'
-  workflow_dispatch: 
+    # 6 PM (22:00 UTC), 12 AM (04:00 UTC), 6 AM (10:00 UTC) de Lunes a Jueves
+    # Se añade un cuarto horario opcional el Viernes a las 6 AM para cerrar la semana.
+    - cron: '0 4,10,22 * * 1-4'
+    - cron: '0 4,10 * * 5'
+  workflow_dispatch: # Permite ejecución manual
 
 jobs:
-  build:
+  actualizar:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Obtener Datos y Generar JSON
+      - name: Consultar y Validar Tasa
+        id: bcvdata
         run: |
-          # Obtener la tasa de la API
-          TASA=$(curl -s https://ve.dolarapi.com/v1/dolares/oficial | jq -r '.promedio')
-          # Obtener fecha y hora actual de Venezuela (UTC-4)
+          # Intentar obtener la tasa
+          RESPONSE=$(curl -s https://ve.dolarapi.com/v1/dolares/oficial)
+          TASA=$(echo $RESPONSE | jq -r '.promedio')
+          
+          # VALIDACIÓN: Si la tasa es nula o no es un número, cancelamos el proceso
+          if [ "$TASA" == "null" ] || [ -z "$TASA" ]; then
+            echo "Error: No se pudo obtener la tasa o la API falló. Manteniendo tasa anterior."
+            exit 0
+          fi
+          
+          # Si llegamos aquí, la tasa es válida. Generamos fecha y hora VZLA
           FECHA=$(date -d 'now - 4 hours' +'%d/%m/%Y %I:%M %p')
           
-          # Crear el archivo JSON con ambos datos
+          # Guardamos en el archivo JSON
           echo "{\"tasa\": \"$TASA\", \"actualizado\": \"$FECHA\"}" > tasa.json
+          echo "cambio=true" >> $GITHUB_OUTPUT
 
-      - name: Commit y Push
+      - name: Guardar en repositorio
+        if: steps.bcvdata.outputs.cambio == 'true'
         run: |
-          git config --local user.email "action@github.com"
+          git config --local user.email "agente@invenio.com"
           git config --local user.name "Agente Invenio"
           git add tasa.json
-          git commit -m "Tasa actualizada: $(date)" || exit 0
+          git commit -m "Actualización Tasa BCV: $(date)" || exit 0
           git push
