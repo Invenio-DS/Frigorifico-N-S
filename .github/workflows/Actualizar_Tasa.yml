@@ -2,35 +2,32 @@ name: Agente Robusto Tasa BCV
 on:
   schedule:
     # 6 PM (22:00 UTC), 12 AM (04:00 UTC), 6 AM (10:00 UTC) de Lunes a Jueves
-    # Se añade un cuarto horario opcional el Viernes a las 6 AM para cerrar la semana.
     - cron: '0 4,10,22 * * 1-4'
     - cron: '0 4,10 * * 5'
-  workflow_dispatch: # Permite ejecución manual
+  workflow_dispatch: 
 
 jobs:
   actualizar:
     runs-on: ubuntu-latest
     steps:
+      # CAMBIO AQUÍ: Usamos v4 para evitar el error de Node.js
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Consultar y Validar Tasa
         id: bcvdata
         run: |
-          # Intentar obtener la tasa
           RESPONSE=$(curl -s https://ve.dolarapi.com/v1/dolares/oficial)
           TASA=$(echo $RESPONSE | jq -r '.promedio')
           
-          # VALIDACIÓN: Si la tasa es nula o no es un número, cancelamos el proceso
           if [ "$TASA" == "null" ] || [ -z "$TASA" ]; then
-            echo "Error: No se pudo obtener la tasa o la API falló. Manteniendo tasa anterior."
+            echo "Error: No se pudo obtener la tasa. Manteniendo anterior."
             exit 0
           fi
           
-          # Si llegamos aquí, la tasa es válida. Generamos fecha y hora VZLA
+          # Fecha y hora de Venezuela (UTC-4)
           FECHA=$(date -d 'now - 4 hours' +'%d/%m/%Y %I:%M %p')
           
-          # Guardamos en el archivo JSON
           echo "{\"tasa\": \"$TASA\", \"actualizado\": \"$FECHA\"}" > tasa.json
           echo "cambio=true" >> $GITHUB_OUTPUT
 
